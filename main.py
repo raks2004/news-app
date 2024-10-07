@@ -6,13 +6,16 @@ from celery import Celery
 from dateutil import parser
 import logging
 
+#Celery setup
 app = Celery('news_parser', broker='redis://localhost:6380/0', backend='redis://localhost:6380/0')
 
+#Logging setup
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s',
                     handlers=[logging.FileHandler("tasks.log"), logging.StreamHandler()])
 logger = logging.getLogger(__name__)
 
+#RSS feeds to parse
 rss_feeds = [
     "http://rss.cnn.com/rss/cnn_topstories.rss",
     "http://qz.com/feed",
@@ -22,8 +25,10 @@ rss_feeds = [
     "https://feeds.bbci.co.uk/news/world/asia/india/rss.xml"
 ]
 
+#Load spaCy model
 nlp = spacy.load("en_core_web_sm")
 
+#Database connection
 def get_db_connection():
     connection = mysql.connector.connect(
         host='localhost',
@@ -33,10 +38,11 @@ def get_db_connection():
     )
     return connection
 
+#Celery task to classify and insert/update articles in the database
 @app.task
 def classify_article(article):
     logger.info(f"Processing article: {article['title']}")
-
+    #Define keywords for classification
     categories = {
         "Terrorism / protest / political unrest / riot": [
             "terrorism", "protest", "riot", "violence", "unrest", "attack", "militant", "demonstration", "march", "civil unrest",
@@ -57,6 +63,7 @@ def classify_article(article):
         "Others": []
     }
 
+  #Classification
     doc = nlp(article['content'].lower())
     article_category = "Others"  # Default category
 
@@ -68,6 +75,7 @@ def classify_article(article):
     article['category'] = article_category
     logger.info(f"Assigned category '{article['category']}' to article: {article['title']}")
 
+    #Insert or update article in databse
     connection = get_db_connection()
     cursor = connection.cursor()
     try:
