@@ -99,7 +99,7 @@ CREATE TABLE articles (
     category VARCHAR(100),
     UNIQUE KEY unique_article (title)
 );
-
+```
 ## Error Handling
 
 The application implements basic error handling for database connections and data parsing. Errors are logged for review and debugging.
