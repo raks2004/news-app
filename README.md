@@ -47,7 +47,7 @@ Additionally, the application allows exporting articles from the database to a C
 
 1. **Clone the Repository**:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/raks2004/news-app
    cd news-classification-app
 
 2. **Install Required Dependencies**:
