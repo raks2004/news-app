@@ -108,7 +108,7 @@ The application implements basic error handling for database connections and dat
 
 Logging is configured to capture all significant events and errors. Logs are stored in tasks.log.
 
-##Celery Task Queue
+## Celery Task Queue
 
 Celery is used to manage the classification of articles asynchronously. Articles are sent to the Celery worker for processing.
 
